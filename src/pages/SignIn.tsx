@@ -1,3 +1,4 @@
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   View,
@@ -7,29 +8,42 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
+import {RootStackParamList} from '../../App';
+import DismissKeyboardView from '../components/DismissKeyboardView';
 
-function SignIn() {
+type SignInSreenProps = NativeStackNavigationProp<RootStackParamList, 'SignIn'>;
+function SignIn({navigation}: SignInSreenProps) {
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
 
+  const emailRef = useRef<TextInput | null>(null); //generic
+  const pwdRef = useRef<TextInput | null>(null);
+
   const onSubmit = useCallback(() => {
-    Alert.alert('알림', '로그인완료');
-  }, []);
+    if (!email || !email.trim()) {
+      return Alert.alert('알림', '이메일을 입력해주세요');
+    }
+    if (!pwd || !pwd.trim()) {
+      return Alert.alert('알림', '비밀번호을 입력해주세요');
+    }
+    Alert.alert('알림', '로그인 되었습니다.');
+  }, [email, pwd]);
 
   const onChangeEmail = useCallback(text => {
-    setEmail(text);
+    setEmail(text.trim());
   }, []);
 
   const onChangePwd = useCallback(text => {
-    setPwd(text);
+    setPwd(text.trim());
   }, []);
 
-  const emailRef = useRef<TextInput | null>(); //generic
-  const pwdRef = useRef<TextInput | null>();
+  const toSignUp = useCallback(() => {
+    navigation.navigate('SignUp');
+  }, [navigation]);
 
   const canGoNext = email && pwd;
   return (
-    <View style={styles.inputWrap}>
+    <DismissKeyboardView style={styles.inputWrap}>
       <View>
         <Text style={styles.lable}>이메일</Text>
         <TextInput
@@ -40,7 +54,13 @@ function SignIn() {
           importantForAutofill="yes"
           autoComplete="email"
           textContentType="emailAddress"
+          keyboardType="email-address"
           returnKeyType="next"
+          onSubmitEditing={() => {
+            pwdRef.current?.focus();
+          }}
+          blurOnSubmit={false}
+          clearButtonMode="while-editing"
           ref={emailRef}
         />
       </View>
@@ -56,6 +76,8 @@ function SignIn() {
           textContentType="password"
           secureTextEntry
           ref={pwdRef}
+          clearButtonMode="while-editing"
+          onSubmitEditing={onSubmit}
         />
       </View>
       <View style={styles.buttonZone}>
@@ -69,11 +91,11 @@ function SignIn() {
           disabled={!canGoNext}>
           <Text style={styles.loginButtonText}>로그인</Text>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={toSignUp}>
           <Text>회원가입하기</Text>
         </Pressable>
       </View>
-    </View>
+    </DismissKeyboardView>
   );
 }
 
