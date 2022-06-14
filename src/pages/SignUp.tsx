@@ -75,10 +75,10 @@ function SignUp({navigation}: SignUpScreenProps) {
       Alert.alert('알림', '회원가입 되었습니다.');
       navigation.navigate('SignIn');
     } catch (err) {
-      const errres = (err as AxiosError).response;
+      const errors = (err as AxiosError).response;
       console.error();
-      if (errres) {
-        Alert.alert('알림', err.response.data.message);
+      if (errors) {
+        Alert.alert('알림', errors.data.message);
       }
     } finally {
       setloading(false);
