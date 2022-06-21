@@ -16,6 +16,7 @@ import {LoggedInParamList} from '../../AppInner';
 import orderSlice, {Order} from '../slices/order';
 import {useAppDispatch} from '../store';
 import {RootState} from '../store/reducer';
+import getDistanceFromLatLonInKm from '../util';
 
 function EachOrder({item}: {item: Order}) {
   const navigation = useNavigation<NavigationProp<LoggedInParamList>>();
@@ -63,6 +64,15 @@ function EachOrder({item}: {item: Order}) {
       <Pressable onPress={toggleDetail} style={styles.info}>
         <Text style={styles.eachInfo}>
           {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}won
+        </Text>
+        <Text style={styles.eachInfo}>
+          {getDistanceFromLatLonInKm(
+            start.latitude,
+            start.longitude,
+            end.latitude,
+            end.longitude,
+          ).toFixed(1)}
+          km
         </Text>
         <Text>삼성동</Text>
         <Text>왕십리동</Text>

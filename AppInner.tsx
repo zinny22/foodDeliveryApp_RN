@@ -17,6 +17,7 @@ import {useAppDispatch} from './src/store/index';
 import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
 import orderSlice from './src/slices/order';
+import usePermissions from './src/hooks/usePermissions';
 
 //다른 페이지에서도 타입을 쓸수 있게 하기 위해서 export사용함
 //로그인 했을때
@@ -41,6 +42,8 @@ function AppInner() {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
 
   const [socket, disconnect] = useSocket();
+
+  usePermissions();
 
   React.useEffect(() => {
     axios.interceptors.response.use(
@@ -123,8 +126,9 @@ function AppInner() {
           }),
         );
       } catch (error) {
+        const errors = (error as AxiosError).response;
         console.error(error);
-        if ((error as AxiosError).response?.data.code === 'expired') {
+        if ((errors?.data as any).code === 'expired') {
           Alert.alert('알림', '다시 로그인 해주세요.');
         }
       } finally {
