@@ -2,9 +2,9 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export interface Order {
   orderId: string;
-  start: {latitude: Number; longitude: Number};
-  end: {latitude: Number; longitude: Number};
-  price: Number;
+  start: {latitude: number; longitude: number};
+  end: {latitude: number; longitude: number};
+  price: number;
 }
 
 interface InitialState {
